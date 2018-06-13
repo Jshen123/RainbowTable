@@ -48,16 +48,18 @@ pwReduce h = digitToLetter digitsN pwLength
           | (len == 0) = ""
           | otherwise = convert quotient base (len-1) ++ show(remainder)
           where remainder = val `mod` base
-                quotient = (val - remainder) `div` base
+                quotient = val `div` base
+
         digitsN = read(convert (fromEnum h) nLetters pwLength)::Int
+
         digitToLetter::Int -> Int -> String
         digitToLetter n len
           | (len == 0 ) = ""
           | otherwise = digitToLetter quotient (len-1) ++ charToString (toLetter remainder)
           where remainder = n `mod` 10
-                quotient = (n - remainder) `div` 10
+                quotient = n `div` 10
                 charToString :: Char -> String
-                charToString c = [c]    
+                charToString c = [c]
 
 -- return a list of n values from a..b (inclusive)
 randomList :: (Random t) => (t, t) -> Int -> IO [t]
