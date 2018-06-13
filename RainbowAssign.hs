@@ -12,6 +12,14 @@ import Data.Char        ( ord )
 type Hash = Int32
 type Passwd = String
 
+pwLength, nLetters, width, height :: Int
+filename :: FilePath
+pwLength = 8            -- length of each password
+nLetters = 5            -- number of letters to use in passwords: 5 -> a-e
+width = 40              -- length of each chain in the table
+height = 1000           -- number of "rows" in the table
+filename = "table.txt"  -- filename to store the table
+
 -- hashString function from GHC's Data.HashTable (adapted from file libraries/base/Data/HashTable.hs in GHC source)
 hashString :: String -> Int32
 hashString = foldl' f golden
@@ -29,6 +37,27 @@ hashString = foldl' f golden
 -- the password hashing function
 pwHash :: Passwd -> Hash
 pwHash = hashString
+
+-- convert a hash value back to a possible password
+-- pwReduce :: Hash -> Passwd
+pwReduce :: Hash -> Passwd
+pwReduce h = digitToLetter digitsN pwLength
+  where 
+        convert::Int -> Int -> Int -> String
+        convert val base len 
+          | (len == 0) = ""
+          | otherwise = convert quotient base (len-1) ++ show(remainder)
+          where remainder = val `mod` base
+                quotient = (val - remainder) `div` base
+        digitsN = read(convert (fromEnum h) nLetters pwLength)::Int
+        digitToLetter::Int -> Int -> String
+        digitToLetter n len
+          | (len == 0 ) = ""
+          | otherwise = digitToLetter quotient (len-1) ++ charToString (toLetter remainder)
+          where remainder = n `mod` 10
+                quotient = (n - remainder) `div` 10
+                charToString :: Char -> String
+                charToString c = [c]    
 
 -- return a list of n values from a..b (inclusive)
 randomList :: (Random t) => (t, t) -> Int -> IO [t]
