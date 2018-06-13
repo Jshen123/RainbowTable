@@ -59,22 +59,6 @@ pwReduce h = digitToLetter listN
               charToString :: Char -> String
               charToString c = [c]
 
-        -- digitToLetter::Int -> Int -> String
-        -- digitToLetter n len
-        --   | (len == 0 ) = ""
-        --   | otherwise = digitToLetter quotient (len-1) ++ charToString (toLetter remainder)
-        --   where remainder = n `mod` 10
-        --         quotient = n `div` 10
-        --         charToString :: Char -> String
-        --         charToString c = [c]
-
-convert::Int -> Int -> Int -> [Int]
-convert val base len 
-  | (len == 0) = []
-  | otherwise = convert quotient base (len-1) ++ [remainder]
-  where remainder = val `mod` base
-        quotient = val `div` base
-
 -- return a list of n values from a..b (inclusive)
 randomList :: (Random t) => (t, t) -> Int -> IO [t]
 randomList (a,b) n =  do
