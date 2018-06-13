@@ -41,25 +41,39 @@ pwHash = hashString
 -- convert a hash value back to a possible password
 -- pwReduce :: Hash -> Passwd
 pwReduce :: Hash -> Passwd
-pwReduce h = digitToLetter digitsN pwLength
+pwReduce h = digitToLetter listN 
   where 
-        convert::Int -> Int -> Int -> String
-        convert val base len 
-          | (len == 0) = ""
-          | otherwise = convert quotient base (len-1) ++ show(remainder)
-          where remainder = val `mod` base
-                quotient = val `div` base
+      convert::Int -> Int -> Int -> [Int]
+      convert val base len 
+        | (len == 0) = []
+        | otherwise = convert quotient base (len-1) ++ [remainder]
+        where remainder = val `mod` base
+              quotient = val `div` base
 
-        digitsN = read(convert (fromEnum h) nLetters pwLength)::Int
+      listN = convert (fromEnum h) nLetters pwLength
 
-        digitToLetter::Int -> Int -> String
-        digitToLetter n len
-          | (len == 0 ) = ""
-          | otherwise = digitToLetter quotient (len-1) ++ charToString (toLetter remainder)
-          where remainder = n `mod` 10
-                quotient = n `div` 10
-                charToString :: Char -> String
-                charToString c = [c]
+      digitToLetter::[Int] -> String
+      digitToLetter [] = ""
+      digitToLetter (x:xs) = charToString (toLetter x) ++ (digitToLetter xs)
+        where 
+              charToString :: Char -> String
+              charToString c = [c]
+
+        -- digitToLetter::Int -> Int -> String
+        -- digitToLetter n len
+        --   | (len == 0 ) = ""
+        --   | otherwise = digitToLetter quotient (len-1) ++ charToString (toLetter remainder)
+        --   where remainder = n `mod` 10
+        --         quotient = n `div` 10
+        --         charToString :: Char -> String
+        --         charToString c = [c]
+
+convert::Int -> Int -> Int -> [Int]
+convert val base len 
+  | (len == 0) = []
+  | otherwise = convert quotient base (len-1) ++ [remainder]
+  where remainder = val `mod` base
+        quotient = val `div` base
 
 -- return a list of n values from a..b (inclusive)
 randomList :: (Random t) => (t, t) -> Int -> IO [t]
